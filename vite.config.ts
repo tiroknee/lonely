@@ -1,0 +1,50 @@
+import { defineConfig, Plugin } from 'vite';
+import path from 'path';
+
+// Minimal virtual shim for Node built-ins on the web build
+function nodeBuiltinsShim(): Plugin {
+  const ids = new Set([
+    'fs',
+    'fs/promises',
+    'path',
+    'readline',
+    'node:fs',
+    'node:fs/promises',
+    'node:path',
+    'node:readline',
+  ]);
+  return {
+    name: 'node-builtins-shim',
+    resolveId(id) {
+      if (ids.has(id)) return id; // mark as resolved virtual id
+      return null;
+    },
+    load(id) {
+      if (ids.has(id)) return 'export {}'; // empty ESM module
+      return null;
+    },
+  };
+}
+
+export default defineConfig({
+  esbuild: {
+    target: 'esnext',
+    jsx: 'automatic',
+    jsxImportSource: 'asciitorium',
+  },
+  build: { target: 'esnext' },
+  plugins: [nodeBuiltinsShim()],
+  resolve: {
+    alias: {
+      // Alias /lib-assets to node_modules/asciitorium/public for library asset fallback
+      '/lib-assets': path.resolve(__dirname, 'node_modules/asciitorium/public'),
+    },
+  },
+  server: {
+    port: 5173,
+    fs: {
+      // Allow serving files from node_modules/asciitorium
+      allow: ['..'],
+    },
+  },
+});
