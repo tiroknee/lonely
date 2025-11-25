@@ -1,47 +1,62 @@
 import {
   App,
-  Art,
-  Banner,
-  Column,
-  Text,
   PerfMonitor,
   State,
   Keybind,
+  Switch,
+  Case,
+  Default,
 } from 'asciitorium';
 
-// State for counter demo
-const count = new State(0);
+import { TitleScreen } from './TitleScreen.js';
+import { Prologue } from './Prologue.js';
+import { Inn } from './Inn.js';
 
-// State for PerfMonitor visibility toggle
-const showPerfMonitor = new State(false);
+// Top-level game modes
+type ScreenState =
+  | 'title'
+  | 'prologue'
+  | 'inn'
+  | 'overworld';
 
-// toggle PerfMonitor
-const togglePerfMonitor = () => {
-  showPerfMonitor.value = !showPerfMonitor.value;
-};
+// Single source of truth
+const currentScreen = new State<ScreenState>('title');
 
+// Perf monitor toggle
+const showPerfMonitor = new State(true);
+
+// Transition helpers
+const screen = {
+  goToTitle: () => (currentScreen.value = 'title'),
+  goToPrologue: () => (currentScreen.value = 'prologue'),
+  goToInn: () => (currentScreen.value = 'inn'),
+  goToOverworld: () => (currentScreen.value = 'overworld'),
+} as const;
+
+// App root
 const app = (
-  <App>
-    <Keybind keyBinding="p" action={togglePerfMonitor} />
+  <App font="PrintChar21" width={96} height={62} border>
+    {/* Global perf toggle */}
+    <Keybind
+      keyBinding="F12"
+      action={() => {
+        showPerfMonitor.value = !showPerfMonitor.value;
+      }}
+    />
 
-    <Column style={{ align: 'center', gap: 1, width: '100%' }}>
-      <Banner font="pencil" text="Welcome to" align="center" />
-      <Banner font="shadows" text="asciitorium" align="center" />
+    {/* Screen state machine */}
+    <Switch width="fill" height="fill" condition={currentScreen}>
+      {/* Splash / title */}
+      <Case when="title" create={TitleScreen} with={{ onComplete: screen.goToPrologue }} />
 
-      <Text style={{ align: 'center', gap: 1 }}>
-        Edit src/main.tsx and save to reload.
-      </Text>
+      {/* Story intro */}
+      <Case when="prologue" create={Prologue} with={{ onComplete: screen.goToInn }} />
 
-      <Art sprite="beating-heart" width={20} align="center" />
+      {/* Innkeeper + Hero Selecting, Song Writing, etc. */}
+      <Case when="inn" create={Inn} with={{ onComplete: screen.goToOverworld }} />
 
-      <Text style={{ align: 'center', gap: 1 }}>
-        Press [P] to toggle performance monitor
-      </Text>
-
-      <Text style={{ align: 'center', gap: 1 }}>
-        in terminal, press [Ctrl+C] to exit.
-      </Text>
-    </Column>
+      <Default create={TitleScreen} with={{ onComplete: screen.goToPrologue }} />
+    </Switch>
 
     <PerfMonitor visible={showPerfMonitor} />
   </App>

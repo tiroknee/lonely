@@ -1,0 +1,20 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+*.tsbuildinfo
+
+# Art assets (preserve exact formatting)
+*.art
+*.flf
+
+# Package manager
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Misc
+.vscode
+.git
