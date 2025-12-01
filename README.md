@@ -1,8 +1,8 @@
-# 🕯️ Lonely Lantern
+# The Lonely Lantern Inn
 
 > _When heroes fall, legends rise._
 
-An ASCII game where you play as a bard accompanying heroes into cursed dungeons. Control both the hero's movement and your musical support in real-time dual-handed gameplay.
+An asciitorium-based game where you play as a bard accompanying heroes into cursed dungeons. Control both the hero's movement and your musical support in real-time dual-handed gameplay.
 
 ## About
 
@@ -10,7 +10,7 @@ You stand at the edge of a cursed valley, lute in hand. Heroes come seeking glor
 
 **Dual-control gameplay** — Your left hand guides the hero (WASD/F), your right hand plays protective melodies (HJKL+Shift). Coordination and timing separate triumph from tragedy.
 
-Built with [Asciitorium](https://github.com/okwolf/asciitorium) and TypeScript.
+Built with [Asciitorium](https://github.com/iroknee/asciitorium) and TypeScript.
 
 ## Getting Started
 
